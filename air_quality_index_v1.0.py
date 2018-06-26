@@ -19,6 +19,7 @@ def cal_pm_iaqi(pm_val):
     """
         计算pm2.5的AQI
     """
+    iaqi = 0
     if 0 <= pm_val < 36:
         iaqi = cal_linear(0, 50, 0, 35, pm_val)
     elif 36 <= pm_val < 76:
@@ -34,6 +35,7 @@ def cal_co_iaqi(co_val):
     """
         计算co的AQI
     """
+    iaqi = 0
     if 0 <= co_val < 3:
         iaqi = cal_linear(0, 50, 0, 3, co_val)
     elif 3 <= co_val < 5:
