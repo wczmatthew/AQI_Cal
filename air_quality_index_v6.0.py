@@ -1,20 +1,32 @@
 """
     作者：wcz
-    版本：v1.0
+    版本：v6.0
     日期：26/06/18
     功能：AQI计算
 """
 import requests
 
+from bs4 import BeautifulSoup
 
-def get_html_text(url):
-    """
-        返回url的文本
-    """
-    r = requests.get(url, timeout=30)
-    print(r.status_code)
 
-    return r.text
+def get_city_aqi(city_pinyin):
+    """
+        获取城市的aqi
+    """
+    url = 'http://pm25.in/' + city_pinyin
+    r = requests.get(url, timeout = 30)
+
+    soup = BeautifulSoup(r.text, 'lxml')
+    div_list = soup.find_all('div', {'class': 'span1'})
+    city_aqi = []
+    for i in range(8):
+        div_content = div_list[i]
+        caption = div_content.find('div', {'class': 'caption'}).text.strip()
+        value = div_content.find('div', {'class': 'value'}).text.strip()
+
+        city_aqi.append((caption, value))
+
+    return city_aqi
 
 
 def main():
@@ -22,19 +34,11 @@ def main():
         主函数
     """
     city_pinyin = input('请输入城市拼音：')
-    url = 'http://pm25.in/' + city_pinyin
 
-    url_text = get_html_text(url)
 
-    aqi_div = '''<div class="span12 data">
-        <div class="span1">
-          <div class="value">
-            '''
-    index = url_text.find(aqi_div)
-    begin_index = index + len(aqi_div)
-    end_index = begin_index + 3
-    aqi_val = url_text[begin_index: end_index]
-    print('空气质量为：{}'.format(aqi_val))
+    city_aqi = get_city_aqi(city_pinyin)
+
+    print(city_aqi)
 
 
 if __name__ == '__main__':
